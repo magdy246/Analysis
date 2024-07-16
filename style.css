@@ -45,9 +45,10 @@ canvas {
     display: block;
     margin: 20px auto;
     color: #5168e9;
+    width: 100%;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
     h1 {
         font-size: 24px;
     }
