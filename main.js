@@ -1,9 +1,8 @@
-let baseUrl = "/main.json";
 let myChart;
 let barColors = ["red", "green", "aqua", "orange", "brown","yellowgreen","chartreuse","blue","burlywood"];
 
 async function getdata(nameFilterValue = "", amountFilterValue = "") {
-  let response = await fetch(baseUrl);
+  let response = await fetch("main.json");
   let result = await response.json();
 
   let table = "";
