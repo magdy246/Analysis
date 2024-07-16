@@ -44,8 +44,7 @@ th, td {
 canvas {
     display: block;
     margin: 20px auto;
-    max-width: 100%; 
-    height: auto;
+    color: #5168e9;
 }
 
 @media (max-width: 600px) {

@@ -1,6 +1,3 @@
-let myChart;
-let barColors = ["red", "green", "aqua", "orange", "brown","yellowgreen","chartreuse","blue","burlywood"];
-
 async function getdata(nameFilterValue = "", amountFilterValue = "") {
   let response = await fetch("main.json");
   let result = await response.json();
@@ -8,14 +5,14 @@ async function getdata(nameFilterValue = "", amountFilterValue = "") {
   let table = "";
   let filteredTransactions = [];
 
-  for (let i = 0; i < result.customers.length; i++) {
-    let customer = result.customers[i];
+  for (let i = 0; i < result.transactions.length; i++) {
     let transaction = result.transactions[i];
+    let customer = result.customers.find((c) => c.id === transaction.customer_id);
 
     if (
-      (nameFilterValue == "" ||
+      (nameFilterValue === "" ||
         customer.name.toLowerCase().includes(nameFilterValue.toLowerCase())) &&
-      (amountFilterValue == "" ||
+      (amountFilterValue === "" ||
         transaction.amount.toString().includes(amountFilterValue))
     ) {
       table += `<tr>
@@ -23,43 +20,49 @@ async function getdata(nameFilterValue = "", amountFilterValue = "") {
           <td>${customer.name}</td>
           <td>${transaction.date}</td>
           <td>${transaction.amount}</td>
-        </tr>`;
-      filteredTransactions.push(transaction.amount); //& collect filtered transaction amounts &
+          </tr>`;
+      filteredTransactions.push(transaction.amount);
     }
   }
 
   document.querySelector("#data").innerHTML = table;
-  updateChart(filteredTransactions); // & Update chart with filtered amounts &
+  updateChart(filteredTransactions);
 }
+
+let myChart;
+
 function updateChart(data) {
   const ctx = document.getElementById("transactionChart").getContext("2d");
   if (myChart) {
-    myChart.destroy(); // & destroy mean clear chart if it exists &
+    myChart.destroy();
   }
   myChart = new Chart(ctx, {
-    type: "doughnut",
+    type: "line",
     data: {
-      labels: data.map((_, index) => `customer ${index + 1}`),
+      labels: data.map((_, index) => `Transaction ${index + 1}`),
       datasets: [
         {
-          label: "Amounts",
+          label: "Transaction Amounts",
           data: data,
-          backgroundColor: barColors,
-          
+          backgroundColor: "rgba(0,0,255,0.1)",
+          borderColor: "rgba(0,0,255,1.0)",
+          fill: true,
         },
       ],
     },
     options: {
+      legend: { display: true },
       scales: {
+        y: {
           beginAtZero: true,
         },
       },
+    },
   });
 }
 
 getdata();
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^FILTERs^^^^^^^^^^^^^^^^^^^^^^^^^
 let nameFilter = document.querySelector("#nameFilter");
 nameFilter.addEventListener("input", function () {
   getdata(nameFilter.value, amountFilter.value);
