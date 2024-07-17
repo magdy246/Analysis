@@ -1,4 +1,5 @@
-async function getdata(nameFilterValue = "", amountFilterValue = "") {
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^FETCH THE JOSN FILE^^^^^^^^^^^^^^^^^^^^^^^^^^^
+async function getData(nameFilterValue = "", amountFilterValue = "") {
   let response = await fetch("main.json");
   let result = await response.json();
 
@@ -7,7 +8,10 @@ async function getdata(nameFilterValue = "", amountFilterValue = "") {
 
   for (let i = 0; i < result.transactions.length; i++) {
     let transaction = result.transactions[i];
-    let customer = result.customers.find((c) => c.id === transaction.customer_id);
+    //* link the id of custmor with the id of transaction *
+    let customer = result.customers.find(function (c) {
+      return c.id == transaction.customer_id;
+    });
 
     if (
       (nameFilterValue === "" ||
@@ -26,18 +30,20 @@ async function getdata(nameFilterValue = "", amountFilterValue = "") {
   }
 
   document.querySelector("#data").innerHTML = table;
+  //* link the data with the library *
   updateChart(filteredTransactions);
 }
+getData();
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^CHART.JS^^^^^^^^^^^^^^^^^^^^^^^^^^^
 let myChart;
-
 function updateChart(data) {
-  const ctx = document.getElementById("transactionChart").getContext("2d");
+  let ctx = document.querySelector("#transactionChart").getContext("2d");
   if (myChart) {
     myChart.destroy();
   }
   myChart = new Chart(ctx, {
-    type: "line",
+    type: "line", //! type of graph !
     data: {
       labels: data.map((_, index) => `Transaction ${index + 1}`),
       datasets: [
@@ -61,14 +67,13 @@ function updateChart(data) {
   });
 }
 
-getdata();
-
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^FILTERs^^^^^^^^^^^^^^^^^^^^^^^^^^^
 let nameFilter = document.querySelector("#nameFilter");
 nameFilter.addEventListener("input", function () {
-  getdata(nameFilter.value, amountFilter.value);
+  getData(nameFilter.value, amountFilter.value);
 });
 
 let amountFilter = document.querySelector("#amountFilter");
 amountFilter.addEventListener("input", function () {
-  getdata(nameFilter.value, amountFilter.value);
+  getData(nameFilter.value, amountFilter.value);
 });
